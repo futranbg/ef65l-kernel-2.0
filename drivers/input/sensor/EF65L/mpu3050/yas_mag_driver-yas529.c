@@ -79,8 +79,8 @@ static void utimer_lib_init(void (*func)(int *sec, int *msec));
 #define MS3CDRV_RDSEL_MEASURE     0xc0
 #define MS3CDRV_RDSEL_CALREGISTER 0xc8
 
-#define MS3CDRV_WAIT_MEASURE_HARDOFFSET  2 /*  1.5[ms] */
-#define MS3CDRV_WAIT_MEASURE_XY1Y2T      13 /* 12.3[ms] */
+#define MS3CDRV_WAIT_MEASURE_HARDOFFSET  20 /*  1.5[ms] */
+#define MS3CDRV_WAIT_MEASURE_XY1Y2T      130 /* 12.3[ms] */
 
 #define MS3CDRV_GSENSOR_INITIALIZED     (0x01)
 #define MS3CDRV_MSENSOR_INITIALIZED     (0x02)

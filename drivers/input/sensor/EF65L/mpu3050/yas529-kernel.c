@@ -258,7 +258,7 @@ int yas529_resume(void *mlsl_handle,
 	    yas529_sensor_i2c_write(mlsl_handle, pdata->address, 1,
 				    dummyData);
 	ERROR_CHECK(result);
-	MLOSSleep(2);		/* wait at least 1.5ms */
+	MLOSSleep(20);		/* wait at least 1.5ms */
 
 	/* Measurement data read */
 	result =
@@ -407,7 +407,7 @@ int yas529_read(void *mlsl_handle,
 	    yas529_sensor_i2c_write(mlsl_handle, pdata->address, 1,
 				    dummyData);
 	ERROR_CHECK(result);
-	MLOSSleep(10);
+	MLOSSleep(100);
 	/* Measurement data read */
 	result =
 	    yas529_sensor_i2c_read(mlsl_handle, pdata->address,

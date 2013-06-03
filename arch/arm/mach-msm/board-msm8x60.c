@@ -517,7 +517,7 @@ static struct regulator_init_data saw_s0_init_data = {
 		.constraints = {
 			.name = "8901_s0",
 			.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
-			.min_uV = 800000,
+			.min_uV = 750000,
 			.max_uV = 1325000,
 		},
 		.consumer_supplies = vreg_consumers_8901_S0,
@@ -528,7 +528,7 @@ static struct regulator_init_data saw_s1_init_data = {
 		.constraints = {
 			.name = "8901_s1",
 			.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
-			.min_uV = 800000,
+			.min_uV = 750000,
 			.max_uV = 1325000,
 		},
 		.consumer_supplies = vreg_consumers_8901_S1,
@@ -3117,8 +3117,8 @@ unsigned char hdmi_is_primary;
 #define MSM_FB_SIZE roundup(MSM_FB_PRIM_BUF_SIZE + MSM_FB_EXT_BUF_SIZE + \
 				MSM_FB_DSUB_PMEM_ADDER, 4096)
 
-#define MSM_PMEM_SF_SIZE 0x5A00000 /*90Mbytes = 0x5A00000*//* 80 Mbytes = 0x5000000*//* 64 Mbytes = 0x4000000 */
-#define MSM_HDMI_PRIM_PMEM_SF_SIZE 0x8000000 /* 128 Mbytes */
+#define MSM_PMEM_SF_SIZE 0x4000000 /*90Mbytes = 0x5A00000*//* 80 Mbytes = 0x5000000*//* 64 Mbytes = 0x4000000 */
+#define MSM_HDMI_PRIM_PMEM_SF_SIZE 0x4000000 /* 128 Mbytes */
 
 #ifdef CONFIG_FB_MSM_OVERLAY0_WRITEBACK
 #define MSM_FB_OVERLAY0_WRITEBACK_SIZE roundup((1280 * 800 * 3 * 2), 4096)
@@ -3133,9 +3133,9 @@ unsigned char hdmi_is_primary;
 #endif  /* CONFIG_FB_MSM_OVERLAY1_WRITEBACK */
 #else	/* ! F_SKYDISP_PMEM_OPTIMIZE */
 #ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
-#define MSM_FB_PRIM_BUF_SIZE (1024 * 600 * 4 * 3) /* 4 bpp x 3 pages */
+#define MSM_FB_PRIM_BUF_SIZE (1280 * 800 * 4 * 3) /* 4 bpp x 3 pages */
 #else
-#define MSM_FB_PRIM_BUF_SIZE (1024 * 600 * 4 * 2) /* 4 bpp x 2 pages */
+#define MSM_FB_PRIM_BUF_SIZE (1280 * 800 * 4 * 2) /* 4 bpp x 2 pages */
 #endif
 
 #ifdef CONFIG_FB_MSM_HDMI_MSM_PANEL
@@ -3173,7 +3173,7 @@ unsigned char hdmi_is_primary;
 
 #define MSM_PMEM_KERNEL_EBI1_SIZE  0x600000
 #define MSM_PMEM_ADSP_SIZE         0x6400000 //100Mb //0x4200000 //0x2000000
-#define MSM_PMEM_AUDIO_SIZE        0x28B000
+#define MSM_PMEM_AUDIO_SIZE        0x400000
 
 #define MSM_SMI_BASE          0x38000000
 #define MSM_SMI_SIZE          0x4000000 /*[BIH] please don't edit this size(64MB) SMI memory is physical real memory sized 64MB */
@@ -3189,8 +3189,8 @@ unsigned char hdmi_is_primary;
 #define USER_SMI_SIZE         (MSM_SMI_SIZE - KERNEL_SMI_SIZE)
 #define MSM_PMEM_SMIPOOL_SIZE USER_SMI_SIZE
 
-#define MSM_ION_SF_SIZE		0x5A00000 /*90Mbytes = 0x5A00000*//* 80 Mbytes = 0x5000000 */ /* 64MB = 0x4000000 */
-#define MSM_ION_CAMERA_SIZE     0x4000000 //F_PANTECH_CAMERA  MSM_PMEM_ADSP_SIZE
+#define MSM_ION_SF_SIZE		0x4000000 /*90Mbytes = 0x5A00000*//* 80 Mbytes = 0x5000000 */ /* 64MB = 0x4000000 */
+#define MSM_ION_CAMERA_SIZE     0x3000000 //F_PANTECH_CAMERA  MSM_PMEM_ADSP_SIZE
 #define MSM_ION_MM_FW_SIZE	0x200000 /* (2MB) */
 #define MSM_ION_MM_SIZE		0x3c00000 /*[BIH] It uses physical real SMI memory... please don't edit it exceed 0x4000000(64MB)*/
 #define MSM_ION_MFC_SIZE	SZ_8K
@@ -3595,7 +3595,8 @@ static struct spi_board_info tdmb_spi_board_info[] __initdata = {
   #endif
 		.bus_num        = 5,
 		.chip_select    = 0,
-		.max_speed_hz   = 10800000,
+		.max_speed_hz	= 0,
+		//.max_speed_hz   = 10800000,
 		//.max_speed_hz   = 24000000,
 #ifdef CONFIG_SKY_TDMB_SPI_GPIO
 		.controller_data = (void *) 39, // chip select
@@ -4373,7 +4374,7 @@ static struct platform_device msm_rpm_log_device = {
 #if defined(CONFIG_BATTERY_MSM8X60) || defined(CONFIG_SKY_BATTERY_MAX17040) || defined(CONFIG_SKY_BATTERY_MAX17043)
 static struct msm_charger_platform_data msm_charger_data = {
 	.safety_time = 180,
-	.update_time = 1,
+	.update_time = 2,
 	.max_voltage = 4200,
 	.min_voltage = 3200,
 };
@@ -4684,7 +4685,7 @@ static struct rpm_regulator_init_data rpm_regulator_init_data[] = {
 	RPM_LDO(PM8058_L0,  0, 1, 0, 1200000, 1200000, LDO150HMIN),
 	RPM_LDO(PM8058_L1,  0, 1, 0, 1200000, 1200000, LDO300HMIN),	
 #if defined(CONFIG_TOUCHSCREEN_QT602240) // N1037 20120329 for ICS touch 
-	RPM_LDO(PM8058_L2,  0, 1, 0, 3300000, 3300000, LDO300HMIN),
+	RPM_LDO(PM8058_L2,  0, 1, 0, 3000000, 3300000, LDO300HMIN),
 //E 20110908 ssoh Change_AVdd_3.3V	
 #else
 	RPM_LDO(PM8058_L2,  0, 1, 0, 1800000, 2600000, LDO300HMIN),
@@ -4718,9 +4719,9 @@ static struct rpm_regulator_init_data rpm_regulator_init_data[] = {
 	RPM_LDO(PM8058_L10, 0, 1, 0, 2600000, 2600000, LDO300HMIN),
 #endif
 #if defined(CONFIG_SKY_TDMB)
-	RPM_LDO(PM8058_L11, 0, 1, 0, 2600000, 2600000, LDO300HMIN),
+	RPM_LDO(PM8058_L11, 0, 1, 0, 0, 0, LDO300HMIN),
 #else
-	RPM_LDO(PM8058_L11, 0, 1, 0, 1500000, 1500000, LDO150HMIN),
+	RPM_LDO(PM8058_L11, 0, 1, 0, 0, 0, LDO150HMIN),
 #endif
 #ifdef PANTECH_MHL_SII9244_POWER_CTRL
 	RPM_LDO(PM8058_L12, 0, 1, 0, 3300000, 3300000, LDO150HMIN),
@@ -7154,7 +7155,7 @@ static struct pm8xxx_keypad_platform_data fluid_keypad_data = {
 	.rows_gpio_start	= PM8058_GPIO_PM_TO_SYS(8),
 	.cols_gpio_start	= PM8058_GPIO_PM_TO_SYS(0),
 	.debounce_ms		= 15,
-	.scan_delay_ms		= 32,
+	.scan_delay_ms		= 64,
 	.row_hold_ns            = 91500,
 	.wakeup			= 1,
 	.keymap_data		= &fluid_keymap_data,
@@ -7452,7 +7453,7 @@ static struct pmic8058_led pmic8058_flash_leds[] = {
 #elif defined(CONFIG_MACH_MSM8X60_EF65L)
 	[2] = {
 		.name			= "keyboard-backlight",
-		.max_brightness = 5,
+		.max_brightness = 1,
 		.id				= PMIC8058_ID_LED_KB_LIGHT,
 	},
 
@@ -10067,7 +10068,7 @@ static void display_common_power(int on)
 			if (!display_reg)
 				return;
 			rc = regulator_set_voltage(display_reg,
-				3300000, 3300000);
+				3000000, 3000000);
 			if (rc)
 				goto out;
 			rc = regulator_enable(display_reg);
@@ -10625,14 +10626,14 @@ static struct msm_bus_vectors rotator_ui_vectors[] = {
 	{
 		.src = MSM_BUS_MASTER_ROTATOR,
 		.dst = MSM_BUS_SLAVE_SMI,
-		.ab  = 0,
-		.ib  = 0,
+		.ab  = (1280 * 800 * 4 * 2 * 60),
+		.ib  = (1280 * 800 * 4 * 2 * 60 * 1.5),
 	},
 	{
 		.src = MSM_BUS_MASTER_ROTATOR,
 		.dst = MSM_BUS_SLAVE_EBI_CH0,
-		.ab  = (1024 * 600 * 4 * 2 * 60),
-		.ib  = (1024 * 600 * 4 * 2 * 60 * 1.5),
+		.ab  = (1280 * 800 * 4 * 2 * 60),
+		.ib  = (1280 * 800 * 4 * 2 * 60 * 1.5),
 	},
 };
 

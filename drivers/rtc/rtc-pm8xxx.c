@@ -20,6 +20,10 @@
 #include <linux/mfd/pm8xxx/core.h>
 #include <linux/mfd/pm8xxx/rtc.h>
 
+#include <mach/msm_rpcrouter.h>
+#include <asm/atomic.h>
+#include <linux/delay.h>
+#include <linux/kthread.h>
 
 /* RTC Register offsets from RTC CTRL REG */
 #define PM8XXX_ALARM_CTRL_OFFSET 0x01
@@ -36,6 +40,10 @@
 
 #define NUM_8_BIT_RTC_REGS	0x4
 
+#define APP_RTC_PROG			0x30000048
+#define APP_RTC_VER			0x00040000
+#define TIMEREMOTE_PROCEEDURE_SET_JULIAN	6
+
 /**
  * struct pm8xxx_rtc - rtc driver internal structure
  * @rtc: rtc device for this driver
@@ -51,6 +59,16 @@ struct pm8xxx_rtc {
 	u8  ctrl_reg;
 	struct device *rtc_dev;
 	spinlock_t ctrl_reg_lock;
+};
+
+struct rpc_time_julian {
+	uint32_t year;
+	uint32_t month;
+	uint32_t day;
+	uint32_t hour;
+	uint32_t minute;
+	uint32_t second;
+	uint32_t day_of_week;
 };
 
 /*

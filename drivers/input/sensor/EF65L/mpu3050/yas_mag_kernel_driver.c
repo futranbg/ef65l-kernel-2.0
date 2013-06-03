@@ -1160,7 +1160,7 @@ static int
 geomagnetic_work(struct yas_mag_data *magdata)
 {
     struct geomagnetic_data *data = i2c_get_clientdata(this_client);
-    uint32_t time_delay_ms = 100;
+    uint32_t time_delay_ms = 200;
     static int cnt = 0;
     int rt, i, accuracy;
 
@@ -1228,7 +1228,7 @@ geomagnetic_work(struct yas_mag_data *magdata)
     }
     }
     else {
-        time_delay_ms = 100;
+        time_delay_ms = 200;
     }
 
     return time_delay_ms;

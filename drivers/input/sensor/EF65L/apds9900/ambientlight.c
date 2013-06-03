@@ -45,7 +45,7 @@
 /* -------------------------------------------------------------------- */
 
 #define SENSOR_INPUTDEV_NAME	"ambientlight"
-#define SENSOR_DEFAULT_DELAY    (200)   /* 200 ms */
+#define SENSOR_DEFAULT_DELAY    (500)   /* 200 ms */
 #define SENSOR_MIN_DELAY        (20)    /* 20 ms */
 #define SENSOR_MAX_DELAY        (2000)  /* 2000 ms */
 #define SENSOR_MIN_ABS			(0)

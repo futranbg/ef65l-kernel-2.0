@@ -310,4 +310,3 @@ static uint8_t T9_TCHHYST[4] = {8,10,8,8}; //8
 #define T48_JUMPLIMIT           	10 
 #define T48_TCHHYST             	12 
 #define T48_NEXTTCHDI           	2  
-
