@@ -36,7 +36,7 @@
 #define MSM_MPDEC_STARTDELAY            70000
 #define MSM_MPDEC_DELAY                 500
 #define MSM_MPDEC_PAUSE                 10000
-#define MSM_MPDEC_IDLE_FREQ             486000
+#define MSM_MPDEC_IDLE_FREQ             384000
 
 enum {
 	MSM_MPDEC_DISABLED = 0,
@@ -569,4 +569,3 @@ static int __init msm_mpdec(void)
 }
 
 late_initcall(msm_mpdec);
-

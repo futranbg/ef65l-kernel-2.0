@@ -622,6 +622,7 @@ int smd_pkt_open(struct inode *inode, struct file *file)
 			smd_pkt_devp->pil = pil_get(peripheral);
 			if (IS_ERR(smd_pkt_devp->pil)) {
 				r = PTR_ERR(smd_pkt_devp->pil);
+				msleep((smd_pkt_devp->open_modem_wait * 1000));
 				goto out;
 			}
 
