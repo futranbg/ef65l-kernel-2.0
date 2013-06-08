@@ -965,7 +965,7 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 	unsigned int j;
 #ifdef CONFIG_HOTPLUG_CPU
 	int sibling;
-	struct cpufreq_policy *cp;
+	static struct cpufreq_policy *cp;
 #endif
 
 	if (cpu_is_offline(cpu))
