@@ -102,8 +102,8 @@
 #define SKY_MULT_1000000(x)	(x*1000000)	
 #define SKY_DIV_1000000(x)	(x/1000000)	
 
-#define SKY_SOC_FULL	1074	// 4.25V
-#define SKY_SOC_EMPTY	15
+#define SKY_SOC_FULL	1172	// 4.25V
+#define SKY_SOC_EMPTY	10
 
 #define CHARGING_DONE_THRESHOLD	1182	// 4.35V
 #define RECHARGING_THRESHOLD 	1144	// 4.3V
@@ -1268,5 +1268,4 @@ module_exit(max17040_exit);
 //MODULE_AUTHOR("Minkyu Kang <mk7.kang@samsung.com>");
 MODULE_DESCRIPTION("MAX17040 Fuel Gauge");
 MODULE_LICENSE("GPL");
-
 
