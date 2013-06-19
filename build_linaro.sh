@@ -12,7 +12,7 @@
 ##############################################################################
 
 export ARCH=arm
-export CROSS_COMPILE=$PWD/../../bin/Linaro/bin/arm-cortex_a9-linux-gnueabi-
+export CROSS_COMPILE=$PWD/../../Linaro-Toolchain/bin/arm-cortex_a8-linux-gnueabi-
 #export CROSS_COMPILE=arm-linux-gnueabi-
 ##############################################################################
 # make zImage
@@ -29,4 +29,5 @@ make INSTALL_MOD_PATH=output modules_install
 # Copy Kernel Image
 ##############################################################################
 #cp -f ./obj/KERNEL_OBJ/arch/arm/boot/zImage .
-
+cp -f arch/arm/boot/zImage ../../boot.img-tools/zImage
+find output/ -name *.ko -exec mv {} output/ \;
