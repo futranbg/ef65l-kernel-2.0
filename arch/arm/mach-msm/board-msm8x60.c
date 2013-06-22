@@ -517,7 +517,7 @@ static struct regulator_init_data saw_s0_init_data = {
 		.constraints = {
 			.name = "8901_s0",
 			.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
-			.min_uV = 750000,
+			.min_uV = 700000,
 			.max_uV = 1325000,
 		},
 		.consumer_supplies = vreg_consumers_8901_S0,
@@ -528,7 +528,7 @@ static struct regulator_init_data saw_s1_init_data = {
 		.constraints = {
 			.name = "8901_s1",
 			.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
-			.min_uV = 750000,
+			.min_uV = 700000,
 			.max_uV = 1325000,
 		},
 		.consumer_supplies = vreg_consumers_8901_S1,
@@ -3595,8 +3595,7 @@ static struct spi_board_info tdmb_spi_board_info[] __initdata = {
   #endif
 		.bus_num        = 5,
 		.chip_select    = 0,
-		.max_speed_hz	= 0,
-		//.max_speed_hz   = 10800000,
+		.max_speed_hz   = 10800000,
 		//.max_speed_hz   = 24000000,
 #ifdef CONFIG_SKY_TDMB_SPI_GPIO
 		.controller_data = (void *) 39, // chip select
@@ -3694,7 +3693,7 @@ static struct mipi_dsi_panel_platform_data novatek_pdata = {
 
 static struct platform_device mipi_dsi_novatek_panel_device = {
 	.name = "mipi_novatek",
-	.id = 0,
+	.id = 0,/home/futranbg/A820-dev/buildkernel/arch/arm/mach-msm/board-msm8x60.c
 	.dev = {
 		.platform_data = &novatek_pdata,
 	}
@@ -4374,7 +4373,7 @@ static struct platform_device msm_rpm_log_device = {
 #if defined(CONFIG_BATTERY_MSM8X60) || defined(CONFIG_SKY_BATTERY_MAX17040) || defined(CONFIG_SKY_BATTERY_MAX17043)
 static struct msm_charger_platform_data msm_charger_data = {
 	.safety_time = 180,
-	.update_time = 2,
+	.update_time = 1,
 	.max_voltage = 4200,
 	.min_voltage = 3200,
 };
@@ -4685,7 +4684,7 @@ static struct rpm_regulator_init_data rpm_regulator_init_data[] = {
 	RPM_LDO(PM8058_L0,  0, 1, 0, 1200000, 1200000, LDO150HMIN),
 	RPM_LDO(PM8058_L1,  0, 1, 0, 1200000, 1200000, LDO300HMIN),	
 #if defined(CONFIG_TOUCHSCREEN_QT602240) // N1037 20120329 for ICS touch 
-	RPM_LDO(PM8058_L2,  0, 1, 0, 3000000, 3300000, LDO300HMIN),
+	RPM_LDO(PM8058_L2,  0, 1, 0, 3300000, 3300000, LDO300HMIN),
 //E 20110908 ssoh Change_AVdd_3.3V	
 #else
 	RPM_LDO(PM8058_L2,  0, 1, 0, 1800000, 2600000, LDO300HMIN),
@@ -4719,9 +4718,9 @@ static struct rpm_regulator_init_data rpm_regulator_init_data[] = {
 	RPM_LDO(PM8058_L10, 0, 1, 0, 2600000, 2600000, LDO300HMIN),
 #endif
 #if defined(CONFIG_SKY_TDMB)
-	RPM_LDO(PM8058_L11, 0, 1, 0, 0, 0, LDO300HMIN),
+	RPM_LDO(PM8058_L11, 0, 1, 0, 2600000, 2600000, LDO300HMIN),
 #else
-	RPM_LDO(PM8058_L11, 0, 1, 0, 0, 0, LDO150HMIN),
+	RPM_LDO(PM8058_L11, 0, 1, 0, 1500000, 1500000, LDO150HMIN),
 #endif
 #ifdef PANTECH_MHL_SII9244_POWER_CTRL
 	RPM_LDO(PM8058_L12, 0, 1, 0, 3300000, 3300000, LDO150HMIN),
@@ -7155,7 +7154,7 @@ static struct pm8xxx_keypad_platform_data fluid_keypad_data = {
 	.rows_gpio_start	= PM8058_GPIO_PM_TO_SYS(8),
 	.cols_gpio_start	= PM8058_GPIO_PM_TO_SYS(0),
 	.debounce_ms		= 15,
-	.scan_delay_ms		= 64,
+	.scan_delay_ms		= 32,
 	.row_hold_ns            = 91500,
 	.wakeup			= 1,
 	.keymap_data		= &fluid_keymap_data,
