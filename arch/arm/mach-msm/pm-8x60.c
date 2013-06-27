@@ -886,7 +886,7 @@ int msm_pm_idle_prepare(struct cpuidle_device *dev)
 				break;
 
 			rs_limits = msm_rpmrs_lowest_limits(true,
-						mode, time_param.latency_us, time_param.sleep_us);
+						mode, &time_param);
 
 			if (MSM_PM_DEBUG_IDLE & msm_pm_debug_mask)
 				pr_info("CPU%u: %s: %s, latency %uus, "
@@ -1147,7 +1147,7 @@ static int msm_pm_enter(suspend_state_t state)
 			msm_rpmrs_show_resources();
 
 		rs_limits = msm_rpmrs_lowest_limits(false,
-				MSM_PM_SLEEP_MODE_POWER_COLLAPSE, time_param.latency_us, time_param.sleep_us);
+				MSM_PM_SLEEP_MODE_POWER_COLLAPSE, &time_param);
 
 		if ((MSM_PM_DEBUG_SUSPEND_LIMITS & msm_pm_debug_mask) &&
 				rs_limits)
@@ -1241,6 +1241,17 @@ static int __init msm_pm_init(void)
 		     PMD_TYPE_SECT | PMD_SECT_AP_WRITE;
 	pmd[0] = __pmd(pmdval);
 	pmd[1] = __pmd(pmdval + (1 << (PGDIR_SHIFT - 1)));
+
+	msm_saved_state_phys =
+		allocate_contiguous_ebi_nomap(CPU_SAVED_STATE_SIZE *
+					      num_possible_cpus(), 4);
+	if (!msm_saved_state_phys)
+		return -ENOMEM;
+	msm_saved_state = ioremap_nocache(msm_saved_state_phys,
+					  CPU_SAVED_STATE_SIZE *
+					  num_possible_cpus());
+	if (!msm_saved_state)
+		return -ENOMEM;
 
 	/* It is remotely possible that the code in msm_pm_collapse_exit()
 	 * which turns on the MMU with this mapping is in the
