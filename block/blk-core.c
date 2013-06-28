@@ -296,13 +296,26 @@ EXPORT_SYMBOL(blk_sync_queue);
  * Description:
  *    See @blk_run_queue. This variant must be called with the queue lock
  *    held and interrupts disabled.
+ *    Device driver will be notified of an urgent request
+ *    pending under the following conditions:
+ *    1. The driver and the current scheduler support urgent reques handling
+ *    2. There is an urgent request pending in the scheduler
+ *    3. There isn't already an urgent request in flight, meaning previously
+ *       notified urgent request completed (!q->notified_urgent)
  */
 void __blk_run_queue(struct request_queue *q)
 {
 	if (unlikely(blk_queue_stopped(q)))
 		return;
 
-	q->request_fn(q);
+	if (!q->notified_urgent &&
+		q->elevator->elevator_type->ops.elevator_is_urgent_fn &&
+		q->urgent_request_fn &&
+		q->elevator->elevator_type->ops.elevator_is_urgent_fn(q)) {
+		q->notified_urgent = true;
+		q->urgent_request_fn(q);
+	} else
+		q->request_fn(q);
 }
 EXPORT_SYMBOL(__blk_run_queue);
 
@@ -413,11 +426,11 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
 	if (!q)
 		return NULL;
 
-	q->backing_dev_info.ra_pages =
-			(VM_MAX_READAHEAD * 1024) / PAGE_CACHE_SIZE;
+	q->backing_dev_info.ra_pages = max_readahead_pages;
 	q->backing_dev_info.state = 0;
 	q->backing_dev_info.capabilities = BDI_CAP_MAP_COPY;
 	q->backing_dev_info.name = "block";
+	q->node = node_id;
 
 	err = bdi_init(&q->backing_dev_info);
 	if (err) {
@@ -502,7 +515,7 @@ blk_init_queue_node(request_fn_proc *rfn, spinlock_t *lock, int node_id)
 	if (!uninit_q)
 		return NULL;
 
-	q = blk_init_allocated_queue_node(uninit_q, rfn, lock, node_id);
+	q = blk_init_allocated_queue(uninit_q, rfn, lock);
 	if (!q)
 		blk_cleanup_queue(uninit_q);
 
@@ -514,18 +527,9 @@ struct request_queue *
 blk_init_allocated_queue(struct request_queue *q, request_fn_proc *rfn,
 			 spinlock_t *lock)
 {
-	return blk_init_allocated_queue_node(q, rfn, lock, -1);
-}
-EXPORT_SYMBOL(blk_init_allocated_queue);
-
-struct request_queue *
-blk_init_allocated_queue_node(struct request_queue *q, request_fn_proc *rfn,
-			      spinlock_t *lock, int node_id)
-{
 	if (!q)
 		return NULL;
 
-	q->node = node_id;
 	if (blk_init_free_list(q))
 		return NULL;
 
@@ -555,7 +559,7 @@ blk_init_allocated_queue_node(struct request_queue *q, request_fn_proc *rfn,
 
 	return NULL;
 }
-EXPORT_SYMBOL(blk_init_allocated_queue_node);
+EXPORT_SYMBOL(blk_init_allocated_queue);
 
 int blk_get_queue(struct request_queue *q)
 {
@@ -937,6 +941,50 @@ void blk_requeue_request(struct request_queue *q, struct request *rq)
 }
 EXPORT_SYMBOL(blk_requeue_request);
 
+/**
+ * blk_reinsert_request() - Insert a request back to the scheduler
+ * @q:		request queue
+ * @rq:		request to be inserted
+ *
+ * This function inserts the request back to the scheduler as if
+ * it was never dispatched.
+ *
+ * Return: 0 on success, error code on fail
+ */
+int blk_reinsert_request(struct request_queue *q, struct request *rq)
+{
+	if (unlikely(!rq) || unlikely(!q))
+		return -EIO;
+
+	blk_delete_timer(rq);
+	blk_clear_rq_complete(rq);
+	trace_block_rq_requeue(q, rq);
+
+	if (blk_rq_tagged(rq))
+		blk_queue_end_tag(q, rq);
+
+	BUG_ON(blk_queued_rq(rq));
+
+	return elv_reinsert_request(q, rq);
+}
+EXPORT_SYMBOL(blk_reinsert_request);
+
+/**
+ * blk_reinsert_req_sup() - check whether the scheduler supports
+ *          reinsertion of requests
+ * @q:		request queue
+ *
+ * Returns true if the current scheduler supports reinserting
+ * request. False otherwise
+ */
+bool blk_reinsert_req_sup(struct request_queue *q)
+{
+	if (unlikely(!q))
+		return false;
+	return q->elevator->elevator_type->ops.elevator_reinsert_req_fn ? true : false;
+}
+EXPORT_SYMBOL(blk_reinsert_req_sup);
+
 static void add_acct_request(struct request_queue *q, struct request *rq,
 			     int where)
 {
@@ -1281,10 +1329,8 @@ get_rq:
 	init_request_from_bio(req, bio);
 
 	if (test_bit(QUEUE_FLAG_SAME_COMP, &q->queue_flags) ||
-	    bio_flagged(bio, BIO_CPU_AFFINE)) {
-		req->cpu = blk_cpu_to_group(get_cpu());
-		put_cpu();
-	}
+	    bio_flagged(bio, BIO_CPU_AFFINE))
+		req->cpu = smp_processor_id();
 
 	plug = current->plug;
 	if (plug) {
@@ -1977,8 +2023,17 @@ struct request *blk_fetch_request(struct request_queue *q)
 	struct request *rq;
 
 	rq = blk_peek_request(q);
-	if (rq)
+	if (rq) {
+		/*
+		 * Assumption: the next request fetched from scheduler after we
+		 * notified "urgent request pending" - will be the urgent one
+		 */
+		if (q->notified_urgent && !q->dispatched_urgent) {
+			q->dispatched_urgent = true;
+			(void)blk_mark_rq_urgent(rq);
+		}
 		blk_start_request(rq);
+	}
 	return rq;
 }
 EXPORT_SYMBOL(blk_fetch_request);
