@@ -2875,6 +2875,7 @@
 0x67b55ea1	add_to_page_cache_lru	vmlinux	EXPORT_SYMBOL_GPL
 0x07b52e38	rtnl_unregister	vmlinux	EXPORT_SYMBOL_GPL
 0xa15ee201	usb_diag_write	vmlinux	EXPORT_SYMBOL
+0xb607704d	usb_bus_start_enum	vmlinux	EXPORT_SYMBOL_GPL
 0x83cb1e95	platform_bus_type	vmlinux	EXPORT_SYMBOL_GPL
 0xa05ed511	blk_rq_map_user	vmlinux	EXPORT_SYMBOL
 0x755d69bf	jbd2_journal_clear_features	vmlinux	EXPORT_SYMBOL
