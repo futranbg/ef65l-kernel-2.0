@@ -1,0 +1,1 @@
+cmd_drivers/char/frandom/built-in.o :=  /home/futranbg/A820-dev/buildkernel/../../Linaro-Toolchain/bin/arm-cortex_a8-linux-gnueabi-ld -EL    -r -o drivers/char/frandom/built-in.o drivers/char/frandom/frandom.o 
