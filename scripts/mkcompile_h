@@ -75,8 +75,8 @@ UTS_TRUNCATE="cut -b -$UTS_LEN"
 
   #echo \#define LINUX_COMPILE_BY \"`echo $LINUX_COMPILE_BY | $UTS_TRUNCATE`\"
   #echo \#define LINUX_COMPILE_HOST \"`echo $LINUX_COMPILE_HOST | $UTS_TRUNCATE`\"
-  echo \#define LINUX_COMPILE_BY \"Futranbg\"
-  echo \#define LINUX_COMPILE_HOST \"visdroid\"
+  echo \#define LINUX_COMPILE_BY \"Tekcafeteam\"
+  echo \#define LINUX_COMPILE_HOST \"Tekcafe.vn\"
 
   echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | tail -n 1`\"
 ) > .tmpcompile
