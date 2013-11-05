@@ -64,3 +64,4 @@ obj-$(CONFIG_PANTECH_CAMERA_S5K6AAFX13) += s5k6aafx13_r2.o s5k6aafx13_cfg.o
 obj-$(CONFIG_PANTECH_CAMERA) += sensor_i2c.o sensor_ctrl.o
 obj-$(CONFIG_PANTECH_CAMERA_TUNER) += ptune_parser.o
 obj-$(CONFIG_FB_MSM_WRITEBACK_MSM_PANEL) += wfd/
+obj-$(CONFIG_MSM_V4L2_VIDEO_OVERLAY_DEVICE) += msm_v4l2_video.o
