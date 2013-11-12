@@ -168,6 +168,7 @@ static u32 smc(u32 cmd_addr)
 	register u32 r1 asm("r1") = (u32)&context_id;
 	register u32 r2 asm("r2") = cmd_addr;
 	do {
+		asm(".arch_extension sec\n\t");
 		asm volatile(
 			__asmeq("%0", "r0")
 			__asmeq("%1", "r0")
@@ -207,6 +208,7 @@ static void scm_inv_range(unsigned long start, unsigned long end)
 	start = round_down(start, cacheline_size);
 	end = round_up(end, cacheline_size);
 	while (start < end) {
+		asm(".arch_extension sec\n\t");
 		asm ("mcr p15, 0, %0, c7, c6, 1" : : "r" (start)
 		     : "memory");
 		start += cacheline_size;
@@ -289,6 +291,7 @@ s32 scm_call_atomic1(u32 svc, u32 cmd, u32 arg1)
 	register u32 r1 asm("r1") = (u32)&context_id;
 	register u32 r2 asm("r2") = arg1;
 
+	asm(".arch_extension sec\n\t");
 	asm volatile(
 		__asmeq("%0", "r0")
 		__asmeq("%1", "r0")
@@ -320,6 +323,7 @@ s32 scm_call_atomic2(u32 svc, u32 cmd, u32 arg1, u32 arg2)
 	register u32 r2 asm("r2") = arg1;
 	register u32 r3 asm("r3") = arg2;
 
+	asm(".arch_extension sec\n\t");
 	asm volatile(
 		__asmeq("%0", "r0")
 		__asmeq("%1", "r0")
@@ -345,6 +349,7 @@ s32 scm_call_atomic4_3(u32 svc, u32 cmd, u32 arg1, u32 arg2,
 	register u32 r4 asm("r4") = arg3;
 	register u32 r5 asm("r5") = arg4;
 
+	asm(".arch_extension sec\n\t");
 	asm volatile(
 		__asmeq("%0", "r0")
 		__asmeq("%1", "r1")
@@ -380,6 +385,7 @@ u32 scm_get_version(void)
 	r0 = 0x1 << 8;
 	r1 = (u32)&context_id;
 	do {
+		asm(".arch_extension sec\n\t");
 		asm volatile(
 			__asmeq("%0", "r0")
 			__asmeq("%1", "r1")
@@ -431,6 +437,7 @@ static int scm_init(void)
 {
 	u32 ctr;
 
+	asm(".arch_extension sec\n\t");
 	asm volatile("mrc p15, 0, %0, c0, c0, 1" : "=r" (ctr));
 	cacheline_size =  4 << ((ctr >> 16) & 0xf);
 

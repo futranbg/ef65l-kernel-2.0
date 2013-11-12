@@ -5,6 +5,20 @@
 *.orig
 *.o
 *.o.cmd
+*.cpio
+.*
+scripts/
+lib/
+kernel/
+Module.symvers
+System.map
+arch/arm/boot/
+include/config/
+include/generated/
+include/linux/version.h
+usr/gen_init_cpio
+vmlinux
+
 
 # files for the dex VM
 *.dex
