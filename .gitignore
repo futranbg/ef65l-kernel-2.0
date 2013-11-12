@@ -1,6 +1,10 @@
 # built application files
 *.apk
 *.ap_
+*.rej
+*.orig
+*.o
+*.o.cmd
 
 # files for the dex VM
 *.dex
